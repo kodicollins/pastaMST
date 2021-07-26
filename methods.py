@@ -5,15 +5,10 @@ This script handles the actual implementation.
 '''
 
 import pasta.alignment as all
+from multiprocessing import Pool
+import itertools
 
 class Methods():
-  def __init__(self):
-      self.merge_groups = {}
-      self.merged = {}
-      self.parent = {}
-      self.rank = {}
-      self.mst = []
-
   # NO IDEA what/why for makeSet, find, union
   def makeSet(self, v):
     self.parent[v] = v
@@ -23,7 +18,7 @@ class Methods():
     if v not in self.parent:
       self.makeSet(v)
     elif self.parent[v] != v:
-      self.parent[v] = self.find(parent[v])
+      self.parent[v] = self.find(self.parent[v])
     return self.parent[v]
 
   def union(self, v1, v2):
@@ -34,11 +29,11 @@ class Methods():
         self.parent[root2] = root1
       elif self.rank[root2] < self.rank[root1]:
         self.parent[root1] = root2
-      else 
+      else: 
           self.parent[root1] == root2
           self.rank[root2] += 1
 
-  def findHome(self, temp)
+  def findHome(self, temp):
     for i in self.merged_groups:
       if temp[1] in self.merged_groups[i] or temp[2] in self.merged_groups[i]:        
         #If it's in one, add it to both
@@ -46,11 +41,12 @@ class Methods():
           self.merged_groups[i].append(temp[1])
         if temp[2] not in self.merged_groups[i]:
           self.merged_groups[i].append(temp[2])
-        self.seq.read_file_object(temp[0])
-        self.alignment[i].merge_in(self.seq)
+        seq = all.CompactAlignment()
+        seq.read_file_object(temp[0])
+        self.alignment[i].merge_in(seq)
         self.merged[i].append(temp[0])
         return i
-      return -1 
+    return -1 
 
   def round2(self):
     for k1, k2 in itertools.combinations(merged_groups, 2):
@@ -65,9 +61,8 @@ class Methods():
               self.merged_groups.pop(k2)
               self.alignment.pop(k2)
               return
-    return
 
-  def trans(self)
+  def trans(self):
     count = 0
     while len(self.mst) > 0:
       temp = self.mst[0]
@@ -77,10 +72,9 @@ class Methods():
         self.merged[count] = [temp[0]]
         self.merged_groups[count] = [temp[1]]
         self.merged_groups[count] = [temp[2]]
-        self.seq.read_file_object(temp[0])
-        self.alignment[count] = self.seq
+        seq = all.CompactAlignment()
+        seq.read_file_object(temp[0])
+        self.alignment[count] = seq
         #does count always iterate or just here, here for now
         count += 1
       self.round2()
-    return
-
